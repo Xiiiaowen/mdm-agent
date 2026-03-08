@@ -2,6 +2,8 @@
 
 A real AI agent for B2B customer data quality — the agentic upgrade of [customer-mdm](https://github.com/Xiiiaowen/customer-mdm).
 
+**[▶ Live Demo](https://mdm-agent-bmigye54nhlhrgmm9pkvlp.streamlit.app/)**
+
 ![MDM Agent Demo](photo/mdm-agent-demo.png)
 
 ---
