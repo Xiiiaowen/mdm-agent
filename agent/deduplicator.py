@@ -19,7 +19,14 @@ from rapidfuzz import fuzz
 # token_sort_ratio would score these ~33% (fails) because one name is much shorter
 
 load_dotenv(override=True)
-_client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+_client = None
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        _client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    return _client
 
 # ── Junk detection ────────────────────────────────────────────────────────────
 
@@ -76,7 +83,7 @@ def _normalize_names_to_english(records: list) -> list:
             + "\n".join(f"{i}: {name}" for i, name in to_translate.items())
         )
         try:
-            response = _client.chat.completions.create(
+            response = _get_client().chat.completions.create(
                 model="gpt-4o-mini",
                 max_tokens=500,
                 messages=[{"role": "user", "content": prompt}],
@@ -119,7 +126,7 @@ def _verify_pair(rec_a: dict, rec_b: dict) -> dict:
         '"keep" = the more complete / canonical record to keep. '
         'If not the same company, use "both".'
     )
-    response = _client.chat.completions.create(
+    response = _get_client().chat.completions.create(
         model="gpt-4o-mini",
         max_tokens=120,
         messages=[{"role": "user", "content": prompt}],

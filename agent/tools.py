@@ -11,7 +11,14 @@ from tavily import TavilyClient
 
 from . import cache as search_cache
 
-_tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
+_tavily = None
+
+
+def _get_tavily():
+    global _tavily
+    if _tavily is None:
+        _tavily = TavilyClient(api_key=os.environ["TAVILY_API_KEY"])
+    return _tavily
 
 _FAKE_DOMAINS = {"test.com", "example.com", "fake.com", "noreply.com", "placeholder.com"}
 
@@ -21,7 +28,7 @@ def web_search(query: str) -> str:
     cached = search_cache.get(query)
     if cached:
         return cached
-    results = _tavily.search(query=query, max_results=3)
+    results = _get_tavily().search(query=query, max_results=3)
     snippets = [r["content"] for r in results.get("results", []) if r.get("content")]
     result = "\n\n---\n\n".join(snippets) if snippets else "No results found."
     search_cache.put(query, result)

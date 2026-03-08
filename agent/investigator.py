@@ -17,7 +17,14 @@ from openai import OpenAI
 from .tools import TOOL_REGISTRY
 
 load_dotenv(override=True)
-client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+_client = None
+
+
+def _get_client():
+    global _client
+    if _client is None:
+        _client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+    return _client
 
 TOOLS = [
     {
@@ -146,7 +153,7 @@ def investigate(record: dict) -> dict:
     trace = []
 
     while True:
-        response = client.chat.completions.create(
+        response = _get_client().chat.completions.create(
             model="gpt-4o-mini",
             max_tokens=2048,
             tools=TOOLS,
