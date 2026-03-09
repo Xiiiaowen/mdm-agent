@@ -51,6 +51,36 @@ TOOLS = [
     {
         "type": "function",
         "function": {
+            "name": "gleif_lookup",
+            "description": (
+                "Look up a company in the GLEIF Global LEI Registry — the authoritative source "
+                "for legal entity data. Returns up to 5 candidate matches with LEI code, official "
+                "legal name, headquarters address, country, jurisdiction, and registration ID. "
+                "Always pass country_code if known to get better matches. "
+                "You must pick the candidate that best matches the company in the record — "
+                "do not blindly use the first result. "
+                "Use this before web_search when you need to verify or enrich company identity, "
+                "address, or registration details."
+            ),
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "company_name": {
+                        "type": "string",
+                        "description": "The company name to look up.",
+                    },
+                    "country_code": {
+                        "type": "string",
+                        "description": "Optional ISO 3166-1 alpha-2 country code to narrow results (e.g. 'DE', 'US').",
+                    },
+                },
+                "required": ["company_name"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
             "name": "validate_phone",
             "description": "Validate and normalize a phone number to E.164 format.",
             "parameters": {
@@ -117,7 +147,7 @@ What to check:
 - Country: must be ISO 3166-1 alpha-2 (e.g. "Germany" → "DE", "China" → "CN")
 - Phone: validate and normalise to E.164 format if present
 - Email: validate format and detect test/fake addresses
-- Missing fields: use web_search to fill in address, city, country, industry, phone, website
+- Missing fields: use gleif_lookup first for address, city, country, registration_id — it returns authoritative legal data. Fall back to web_search for industry, phone, website which GLEIF does not cover.
 - Junk records: if clearly test data (e.g. "TEST ENTRY", all fields "N/A"), flag the entire record
 
 At the end, output ONLY a valid JSON object with this exact structure:

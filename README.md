@@ -48,6 +48,7 @@ The order matters: enriching a duplicate or junk record wastes API calls. By fil
 
 - **3-phase pipeline** — junk filter → dedup → agent, in the right order
 - **Autonomous investigation** — LLM decides which tools to call per record
+- **GLEIF LEI registry** — authoritative legal entity lookup (official name, address, registration ID, jurisdiction) with no API key required; results cached to disk
 - **Cross-language dedup** — Chinese/Japanese names translated to English before fuzzy matching
 - **Web search with cache** — Tavily search results cached to disk; repeat runs cost less
 - **Phone validation** — E.164 normalisation via `phonenumbers`
@@ -119,6 +120,7 @@ streamlit run app.py
 
 | Tool | What it does |
 |---|---|
+| `gleif_lookup(company_name, country_code)` | GLEIF LEI registry — authoritative legal name, address, jurisdiction, registration ID (no API key needed) |
 | `web_search(query)` | Tavily web search — cached to disk |
 | `validate_phone(phone, country_code)` | E.164 normalisation |
 | `validate_email(email)` | Format check + fake domain detection |
@@ -131,6 +133,7 @@ streamlit run app.py
 | Layer | Library |
 |---|---|
 | Agent / LLM | OpenAI GPT-4o-mini |
+| Legal Entity Data | GLEIF LEI Registry (free, no key) |
 | Web Search | Tavily |
 | Fuzzy Matching | rapidfuzz |
 | Phone Validation | phonenumbers |
@@ -152,7 +155,7 @@ streamlit run app.py
 ## What Could Be Improved in Practice
 
 **Deduplication accuracy**
-The current approach translates names then fuzzy-matches. It still struggles with companies that use completely different names in different markets (e.g. a Chinese holding company vs its Western-market trading name). A production system would cross-reference legal entity registries (e.g. GLEIF, Companies House).
+The current approach translates names then fuzzy-matches. It still struggles with companies that use completely different names in different markets (e.g. a Chinese holding company vs its Western-market trading name). A production system would also cross-reference Companies House or other national registries beyond GLEIF.
 
 **Cache expiration**
 The web search cache has no expiry. Company information changes — phone numbers, addresses, websites. In production, cached entries should expire after 30–90 days and be refreshed.

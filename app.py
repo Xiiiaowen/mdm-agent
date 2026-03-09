@@ -152,6 +152,7 @@ with st.sidebar:
     st.markdown("**Phase 3** — Agent enriches survivors only")
     st.divider()
     st.markdown("**Agent tools**")
+    st.markdown("🏛️ `gleif_lookup` — GLEIF LEI registry")
     st.markdown("🌐 `web_search` — Tavily (cached)")
     st.markdown("📞 `validate_phone` — E.164 format")
     st.markdown("📧 `validate_email` — format + fake check")
@@ -160,7 +161,7 @@ with st.sidebar:
     cache_stats = search_cache.stats()
     st.markdown("**Search cache**")
     st.caption(f"{cache_stats['size']} entries · {cache_stats['hits']} hits · {cache_stats['misses']} misses")
-    st.caption("Powered by GPT-4o-mini + Tavily")
+    st.caption("Powered by GPT-4o-mini + Tavily + GLEIF")
 
 
 # ── Upload ────────────────────────────────────────────────────────────────────
